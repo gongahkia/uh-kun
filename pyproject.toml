@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "uh-kun"
+version = "0.1.0"
+description = "Image classification library for Ya-kun / No-kun / Maybe-kun with ChromaDB vector search."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "uh-kun contributors"}]
+keywords = ["image-classification", "clip", "chromadb", "vector-db", "yakun"]
+
+dependencies = [
+  "chromadb>=0.5.5",
+  "numpy>=1.26",
+  "pillow>=10.0.0",
+  "torch>=2.1",
+  "open-clip-torch>=2.24.0",
+  "tqdm>=4.66.0",
+  "pydantic>=2.6",
+  "typer>=0.12.0",
+  "rich>=13.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0.0",
+  "ruff>=0.6.0",
+]
+
+[project.scripts]
+uh-kun = "uh_kun.cli:app"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

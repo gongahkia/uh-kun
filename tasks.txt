@@ -1,0 +1,34 @@
+Data: Add `uh-kun data validate` to check folder layout, label aliases, corrupt files, duplicates, and image sizes
+Data: Add `uh-kun data split` to create deterministic train/val/test splits with seed + stratification
+Data: Add EXIF handling policy (strip vs respect orientation) and ensure deterministic preprocessing
+Data: Add configurable max image size and safe downscale to avoid OOM on very large images
+Embeddings: Persist computed embeddings to a local cache (keyed by file hash + CLIP config) to speed re-ingest
+Embeddings: Add batch device controls (cpu/cuda/mps) and mixed precision toggles for faster practitioner runs
+Embeddings: Add optional INT8/quantized inference path where supported (OpenCLIP int8 tutorial guidance)
+VectorDB: Introduce a `VectorStore` interface (upsert/query/count/delete) and make Chroma one implementation
+VectorDB: Support Chroma collection metadata filtering (e.g., split=train/val, source=camera) during query
+VectorDB: Add `uh-kun db stats` to report count, label distribution, embedding dim, and last-ingest timestamp
+VectorDB: Add `uh-kun db rebuild` to wipe/recreate a collection safely (confirm prompt + backup option)
+VectorDB: Add Cassandra/Astra Vector Search backend behind the same `VectorStore` interface (optional extra)
+Training: Add `uh-kun ingest --overwrite` and `--delete-missing` policies for corpus synchronization
+Training: Add `uh-kun ingest --dry-run` to preview how many items would be added/updated/deleted
+Training: Track dataset provenance in metadata (path, label, sha256, captured_at, source, split)
+Training: Add hard-negative mining workflow (find nearest neighbors with different label and surface to curator)
+Prediction: Replace simple inverse-distance vote with calibrated scoring and a tunable decision rule
+Prediction: Implement a thresholded Maybe-kun policy (e.g., if top1-top2 margin < tau or entropy > tau)
+Prediction: Add `uh-kun predict --explain` to print neighbor thumbnails/paths + distances for debugging
+Evaluation: Add per-class precision/recall/F1, confusion matrix, and top-k accuracy metrics
+Evaluation: Add `uh-kun eval --by-source` to compute metrics sliced by metadata fields (camera, outlet, lighting)
+Evaluation: Add a simple calibration report to tune tau for Maybe-kun using validation set
+Evaluation: Add regression tests with a tiny synthetic image set to catch label drift and pipeline changes
+CLI/Config: Add a single config model (pydantic-settings) with `.env`/TOML support for db/model defaults
+CLI/Config: Add CLI help panels and rich-formatted help output (Typer rich_help_panel) for better UX
+CLI/Config: Add `uh-kun doctor` to verify torch device availability, model download, and db write permissions
+Packaging: Add optional extras `uh-kun[cassandra]` and `uh-kun[chroma]` to keep installs minimal
+Packaging: Pin and document compatible torch/open-clip versions for macOS (MPS) and Linux (CUDA)
+Repro: Add a `uh-kun version` output that prints library version + CLIP config + embedding dim + device
+Repro: Add embedding/version namespace in collection metadata to prevent mixing incompatible embeddings
+Perf: Add parallel image loading and bounded queueing to keep GPU busy without spiking RAM
+Perf: Add benchmark command `uh-kun bench` for ingest throughput and query latency (p50/p95)
+Quality: Add mypy/ruff CI and a minimal GitHub Actions workflow for lint + tests
+Quality: Add structured logging and optional JSON logs for practitioner pipelines

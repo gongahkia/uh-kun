@@ -1,0 +1,2 @@
+[console_scripts]
+uh-kun = uh_kun.cli:app
