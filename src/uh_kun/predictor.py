@@ -13,6 +13,10 @@ class PredictConfig:
     db_path: str
     collection: str = "yakun"
     k: int = 5
+    # If prediction is ambiguous, return Maybe-kun.
+    # Scores are normalized to sum to 1.
+    maybe_min_score: float = 0.55
+    maybe_margin: float = 0.05
     clip_model: str = "ViT-B-32"
     clip_pretrained: str = "openai"
 
@@ -28,6 +32,19 @@ def _vote(labels: list[Label], dists: list[float]) -> dict[Label, float]:
         for k in list(scores.keys()):
             scores[k] = scores[k] / s
     return scores
+
+
+def _decide_label(scores: dict[Label, float], *, maybe_min_score: float, maybe_margin: float) -> Label:
+    ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)
+    if not ranked:
+        return "Maybe-kun"
+    (top_label, top_score) = ranked[0]
+    second_score = ranked[1][1] if len(ranked) > 1 else 0.0
+    if top_score < maybe_min_score:
+        return "Maybe-kun"
+    if (top_score - second_score) < maybe_margin:
+        return "Maybe-kun"
+    return top_label
 
 
 def predict_one(image_path: str, cfg: PredictConfig) -> Prediction:
@@ -50,5 +67,5 @@ def predict_one(image_path: str, cfg: PredictConfig) -> Prediction:
         neigh_labels.append(lab)
 
     scores = _vote(neigh_labels, distances)
-    label = max(scores, key=scores.get)
+    label = _decide_label(scores, maybe_min_score=cfg.maybe_min_score, maybe_margin=cfg.maybe_margin)
     return Prediction(label=label, scores=scores, neighbors=neigh)

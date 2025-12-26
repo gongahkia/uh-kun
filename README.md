@@ -7,6 +7,11 @@ An image classification library that categorises images into:
 
 It uses **CLIP image embeddings** + **ChromaDB** as a vector database. “Training” means embedding your labelled corpus and storing those embeddings in Chroma; prediction uses nearest-neighbour search and simple vote/score rules.
 
+Label meaning:
+- **Ya-kun**: image is *definitely* from Ya Kun Kaya Toast's menu
+- **No-kun**: image is *not* from Ya Kun Kaya Toast's menu
+- **Maybe-kun**: model is unsure (an abstain/uncertainty output, not a required training class)
+
 ## Dataset layout
 
 Put your labelled corpus in a folder like:
@@ -18,18 +23,17 @@ data/
       img1.jpg
     no-kun/
       img2.png
-    maybe-kun/
-      ...
   val/            # optional
     ya-kun/
     no-kun/
-    maybe-kun/
 ```
 
 Class folder names are case-insensitive and accept a few aliases:
 - `ya-kun`, `yakun`, `ya`
 - `no-kun`, `nokun`, `no`
 - `maybe-kun`, `maybekun`, `maybe`
+
+Note: you can optionally create a `maybe-kun/` folder for experiments, but the intended workflow is to train on **only** `ya-kun/` + `no-kun/` and let the model output **Maybe-kun** when uncertain.
 
 ## Install
 
@@ -61,6 +65,10 @@ uh-kun eval ./data/val --db ./chroma_db --collection yakun --k 5
 ```bash
 uh-kun predict ./some_image.jpg --db ./chroma_db --collection yakun --k 5
 ```
+
+If you want the model to abstain more/less often, tune:
+- `--maybe-min-score` (default `0.55`)
+- `--maybe-margin` (default `0.05`)
 
 ## Notes
 

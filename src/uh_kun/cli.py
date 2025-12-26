@@ -40,9 +40,20 @@ def eval(
     db: Path = typer.Option(..., "--db", help="ChromaDB persistent directory"),
     collection: str = typer.Option("yakun", "--collection"),
     k: int = typer.Option(5, "--k"),
+    maybe_min_score: float = typer.Option(0.55, "--maybe-min-score", help="If top score is below this, return Maybe-kun"),
+    maybe_margin: float = typer.Option(0.05, "--maybe-margin", help="If top1-top2 score margin is below this, return Maybe-kun"),
 ):
     """Evaluate accuracy against a labelled validation folder."""
-    res = eval_corpus(EvalConfig(data_root=str(data_root), db_path=str(db), collection=collection, k=k))
+    res = eval_corpus(
+        EvalConfig(
+            data_root=str(data_root),
+            db_path=str(db),
+            collection=collection,
+            k=k,
+            maybe_min_score=maybe_min_score,
+            maybe_margin=maybe_margin,
+        )
+    )
     print(res)
 
 
@@ -52,9 +63,20 @@ def predict(
     db: Path = typer.Option(..., "--db", help="ChromaDB persistent directory"),
     collection: str = typer.Option("yakun", "--collection"),
     k: int = typer.Option(5, "--k"),
+    maybe_min_score: float = typer.Option(0.55, "--maybe-min-score", help="If top score is below this, return Maybe-kun"),
+    maybe_margin: float = typer.Option(0.05, "--maybe-margin", help="If top1-top2 score margin is below this, return Maybe-kun"),
 ):
     """Predict Ya-kun / No-kun / Maybe-kun for a single image."""
-    pred = predict_one(str(image), PredictConfig(db_path=str(db), collection=collection, k=k))
+    pred = predict_one(
+        str(image),
+        PredictConfig(
+            db_path=str(db),
+            collection=collection,
+            k=k,
+            maybe_min_score=maybe_min_score,
+            maybe_margin=maybe_margin,
+        ),
+    )
 
     print(f"[bold]Prediction:[/bold] {pred.label}")
     t = Table(title="Scores")
